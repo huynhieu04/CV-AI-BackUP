@@ -1,0 +1,1 @@
+import{J as i,h as e}from"./chunk-S4WN6RUR.js";var n=class t{_term$=new e("");term$=this._term$.asObservable();setTerm(r){this._term$.next(r||"")}get currentTerm(){return this._term$.value}static \u0275fac=function(o){return new(o||t)};static \u0275prov=i({token:t,factory:t.\u0275fac,providedIn:"root"})};export{n as a};

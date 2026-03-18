@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    apiBaseUrl: 'https://cv-ai-system.up.railway.app/',
+    apiBaseUrl: 'https://cv-ai-classification.up.railway.app/',
 };
