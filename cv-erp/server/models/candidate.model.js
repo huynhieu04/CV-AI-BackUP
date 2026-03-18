@@ -1,4 +1,3 @@
-// server/models/candidate.model.js
 const mongoose = require("mongoose");
 
 const matchResultSchema = new mongoose.Schema(
@@ -7,6 +6,7 @@ const matchResultSchema = new mongoose.Schema(
             mainSkills: [String],
             mainDomains: [String],
             seniority: String,
+            confidence: String,
         },
         matches: [
             {
@@ -25,6 +25,7 @@ const matchResultSchema = new mongoose.Schema(
             },
         ],
         bestJobId: { type: mongoose.Schema.Types.ObjectId, ref: "Job" },
+        disclaimer: String,
     },
     { _id: false }
 );
@@ -35,26 +36,23 @@ const candidateSchema = new mongoose.Schema(
         email: { type: String, trim: true, lowercase: true, default: "" },
         phone: { type: String, trim: true, default: "" },
 
-        // for AI matching
         skills: { type: [String], default: [] },
         experienceText: { type: String, default: "" },
-        education: { type: String, default: "" },
+        educationText: { type: String, default: "" },
         languages: { type: [String], default: [] },
 
         rawText: { type: String, default: "" },
 
         cvFile: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "CVFile", // ✅ đúng tên model
+            ref: "CVFile",
         },
-
 
         matchResult: { type: matchResultSchema, default: null },
     },
     { timestamps: true }
 );
 
-// (Optional) index để tìm nhanh theo email
 candidateSchema.index({ email: 1 });
 
 module.exports = mongoose.model("Candidate", candidateSchema);

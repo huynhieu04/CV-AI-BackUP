@@ -1,6 +1,7 @@
 const Candidate = require("../models/candidate.model");
 const pdfParse = require("pdf-parse");
 const mammoth = require("mammoth");
+const Tesseract = require("tesseract.js");
 const { extractCvProfileByGemini } = require("./cv-extract-ai.service");
 
 /* =========================
@@ -21,59 +22,127 @@ function extractPhoneFromText(text) {
     return String(match[0]).replace(/\s+/g, " ").trim();
 }
 
+function guessNameFromText(text) {
+    const lines = String(text || "")
+        .split("\n")
+        .map((x) => x.trim())
+        .filter(Boolean)
+        .slice(0, 12);
+
+    for (const line of lines) {
+        if (
+            line.length >= 4 &&
+            line.length <= 60 &&
+            !/@/.test(line) &&
+            !/\d{4,}/.test(line)
+        ) {
+            return line;
+        }
+    }
+
+    return "Candidate from CV";
+}
+
+function isWordMime(mimeType = "") {
+    const t = String(mimeType || "").toLowerCase();
+    return (
+        t.includes("msword") ||
+        t.includes("word") ||
+        t.includes("officedocument.wordprocessingml.document")
+    );
+}
+
+function isImageMime(mimeType = "") {
+    return String(mimeType || "").toLowerCase().startsWith("image/");
+}
+
+async function extractTextFromPdf(buffer) {
+    const data = await pdfParse(buffer);
+    return String(data?.text || "").trim();
+}
+
+async function extractTextFromDocx(buffer) {
+    const result = await mammoth.extractRawText({ buffer });
+    return String(result?.value || "").trim();
+}
+
+async function extractTextFromImage(buffer) {
+    const {
+        data: { text },
+    } = await Tesseract.recognize(buffer, "eng+vie", {
+        logger: (m) => {
+            if (m?.status === "recognizing text") {
+                const p = Math.round((m.progress || 0) * 100);
+                console.log(`[OCR] recognizing text... ${p}%`);
+            }
+        },
+    });
+
+    return String(text || "").trim();
+}
+
 /* =========================
    MAIN: PARSE FROM BUFFER
 ========================= */
 async function parseCvFromBuffer(buffer, mimeType, cvFileId) {
     if (!buffer) throw new Error("CV buffer is missing");
 
+    const safeMime = String(mimeType || "").toLowerCase();
     let rawText = "";
 
-    // PDF
-    if (mimeType.includes("pdf")) {
-        const data = await pdfParse(buffer);
-        rawText = data.text || "";
-    }
+    console.log("[CV PARSER] mimeType =", safeMime);
+    console.log("[CV PARSER] cvFileId =", cvFileId ? String(cvFileId) : null);
 
-    // DOCX
-    else if (mimeType.includes("word")) {
-        const result = await mammoth.extractRawText({ buffer });
-        rawText = result.value || "";
-    }
-
-    // IMAGE (OCR placeholder)
-    else if (mimeType.startsWith("image/")) {
-        rawText = ""; //  có thể tích hợp Tesseract sau
-    }
-
-    else {
+    // 1) Extract raw text
+    if (safeMime.includes("pdf")) {
+        rawText = await extractTextFromPdf(buffer);
+    } else if (isWordMime(safeMime)) {
+        rawText = await extractTextFromDocx(buffer);
+    } else if (isImageMime(safeMime)) {
+        rawText = await extractTextFromImage(buffer);
+    } else {
         throw new Error("Unsupported CV file type");
     }
 
-    // 2️⃣ Gemini AI extract
+    rawText = String(rawText || "")
+        .replace(/\u0000/g, "")
+        .replace(/\r/g, "\n")
+        .trim();
+
+    console.log("[CV PARSER] rawText length =", rawText.length);
+    console.log("[CV PARSER] rawText preview =", rawText.slice(0, 500));
+
+    // 2) Nếu extract fail thì chặn luôn, không tạo candidate rỗng
+    if (!rawText) {
+        throw new Error(
+            "Không thể trích xuất nội dung từ CV. Vui lòng dùng file PDF, DOCX hoặc ảnh rõ nét hơn."
+        );
+    }
+
+    // 3) Gemini extract
     const ai = await extractCvProfileByGemini(rawText);
 
-    // 3️⃣ Fallback
+    // 4) Fallback
     const email = ai.email || extractEmailFromText(rawText);
     const phone = ai.phone || extractPhoneFromText(rawText);
-    const fullName = ai.fullName || "Candidate from CV";
+    const fullName = ai.fullName || guessNameFromText(rawText);
 
-    // 4️⃣ Save candidate
+    // 5) Save candidate
     const candidate = await Candidate.create({
         fullName,
         email,
         phone,
-        skills: ai.skills || [],
+        skills: Array.isArray(ai.skills) ? ai.skills : [],
         experienceText: ai.experienceText || "",
-        education: ai.educationText || "",
-        languages: ai.languages || [],
+        educationText: ai.educationText || "",
+        languages: Array.isArray(ai.languages) ? ai.languages : [],
         rawText,
         cvFile: cvFileId,
         matchResult: null,
     });
 
     return {
-        text: rawText,     // giữ tương thích controller
+        text: rawText,
         rawText,
         candidate,
     };

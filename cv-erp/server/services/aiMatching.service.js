@@ -494,7 +494,7 @@ function enforceSeniority(result, cvData) {
     result.candidateSummary.confidence = cvData.seniorityConfidence;
   }
 
-  // 4) ✅ HARD RULE chống "Lead bậy" cho student/intern
+  // 4)  HARD RULE chống "Lead bậy" cho student/intern
   // - student/intern: KHÔNG được Lead (trừ khi months >= 48)
   const sig = cvData?.signals || {};
   const months = cvData?.monthsOfExperience;
@@ -504,7 +504,7 @@ function enforceSeniority(result, cvData) {
     if (!ok) result.candidateSummary.seniority = "Mid"; // hoặc "Senior" tùy bạn
   }
 
-  // 5) ✅ nếu leaderStudentContext (CLB/trường) thì cap max Mid (trừ khi months >= 48)
+  // 5)  nếu leaderStudentContext (CLB/trường) thì cap max Mid (trừ khi months >= 48)
   if (sig.leaderStudentContext && result.candidateSummary.seniority === "Lead") {
     const ok = typeof months === "number" && months >= 48;
     if (!ok) result.candidateSummary.seniority = "Mid";
@@ -681,8 +681,8 @@ async function matchCandidateToJobs(candidate, rawText, cvFileId) {
     skillsText: Array.isArray(candidate.skills) ? candidate.skills.join(", ") : "",
     experienceText: candidate.experienceText || "",
 
-    // ✅ FIX: extractor trả educationText, không phải education
-    educationText: candidate.educationText || candidate.education || "",
+    //  FIX: extractor trả educationText, không phải education
+    educationText: candidate.educationText || "",
 
     languagesText: Array.isArray(candidate.languages) ? candidate.languages.join(", ") : "",
 

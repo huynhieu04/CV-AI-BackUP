@@ -25,11 +25,22 @@ SCHEMA:
 
 function normalize(res) {
     const safeArr = (a, n) =>
-        Array.isArray(a) ? a.map(v => String(v || "").trim()).filter(Boolean).slice(0, n) : [];
+        Array.isArray(a)
+            ? a.map((v) => String(v || "").trim()).filter(Boolean).slice(0, n)
+            : [];
 
-    const allowed = new Set(["Intern", "Fresher", "Junior", "Mid", "Senior", "Lead", "Unknown"]);
+    const allowed = new Set([
+        "Intern",
+        "Fresher",
+        "Junior",
+        "Mid",
+        "Senior",
+        "Lead",
+        "Unknown",
+    ]);
 
-    const s = String(res?.seniority || "Unknown");
+    const s = String(res?.seniority || "Unknown").trim();
+
     return {
         fullName: String(res?.fullName || "").trim(),
         email: String(res?.email || "").trim(),
@@ -43,9 +54,14 @@ function normalize(res) {
 }
 
 async function extractCvProfileByGemini(rawText) {
-    const systemInstruction = buildExtractInstruction();
+    const text = String(rawText || "").trim();
 
-    const text = String(rawText || "");
+    // Nếu text rỗng thì không gọi Gemini
+    if (!text) {
+        return normalize({});
+    }
+
+    const systemInstruction = buildExtractInstruction();
     const clipped = text.length > 18000 ? text.slice(0, 18000) : text;
 
     const payloadJson = JSON.stringify({ rawText: clipped }, null, 2);
