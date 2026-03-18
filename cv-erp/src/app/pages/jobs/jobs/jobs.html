@@ -1,0 +1,261 @@
+<div class="page page--jobs">
+    <header class="page__header">
+        <div>
+            <h1 class="page__title">Quản Lý Vị Trí Tuyển Dụng</h1>
+            <p class="page__subtitle">Quản lý danh sách vị trí tuyển dụng để AI so khớp với CV.</p>
+            <p class="page__subtitle page__subtitle--meta">
+                Backend sẽ lưu JD vào MongoDB và dùng cho bước <strong>AI matching</strong>.
+            </p>
+        </div>
+    </header>
+
+    <div class="jobs-layout">
+        <!-- FORM -->
+        <section class="card card--shadow">
+            <div class="card__header">
+                <h2 class="card__title">Thêm Job mới</h2>
+                <p class="card__sub">Mã JD sẽ được hệ thống tự sinh khi bạn lưu Job.</p>
+            </div>
+            <div class="importbar">
+                <div class="importbar__left">
+                    <button type="button" class="btn btn--ghost" (click)="downloadTemplate()" [disabled]="importing">
+                        Tải template
+                    </button>
+
+                    <!-- input thật: ẨN -->
+                    <input #excelInput type="file" accept=".xlsx,.xls,.csv" class="importbar__file"
+                        (change)="onPickExcel($event)" />
+
+                    <button type="button" class="btn btn--ghost" (click)="excelInput.click()" [disabled]="importing">
+                        Chọn file
+                    </button>
+
+                    <span class="importbar__filename" [class.muted]="!excelFileName">
+                        {{ excelFileName || 'Chưa chọn file' }}
+                    </span>
+                </div>
+
+                <div class="importbar__right">
+                    <button type="button" class="btn btn--primary" (click)="importExcel()"
+                        [disabled]="!excelFile || importing">
+                        {{ importing ? 'Đang import…' : 'Import Excel' }}
+                    </button>
+                </div>
+            </div>
+
+
+
+            <div class="jobs-form">
+                <!-- BASIC -->
+                <div class="jobs-form__section jobs-form__section--basic">
+                    <div class="jobs-form__section-title">Thông tin cơ bản</div>
+
+                    <div class="jobs-form__grid jobs-form__grid--basic">
+                        <div class="jobs-form__field">
+                            <label class="field__label">Tên vị trí</label>
+                            <input class="field__input field__input--lg" type="text"
+                                placeholder="VD: Software Engineer (Web)" [(ngModel)]="newJob.title" />
+                        </div>
+
+                        <div class="jobs-form__field">
+                            <label class="field__label">Cấp độ</label>
+                            <select class="field__input" [(ngModel)]="newJob.level">
+                                <option value="">-- Chọn --</option>
+                                <option value="Intern">Intern</option>
+                                <option value="Junior">Junior</option>
+                                <option value="Middle">Middle</option>
+                                <option value="Senior">Senior</option>
+                                <option value="Manager">Manager</option>
+                            </select>
+                        </div>
+
+                        <div class="jobs-form__field">
+                            <label class="field__label">Hình thức</label>
+                            <select class="field__input" [(ngModel)]="newJob.type">
+                                <option value="">-- Chọn --</option>
+                                <option value="Full-time">Full-time</option>
+                                <option value="Part-time">Part-time</option>
+                                <option value="Contract">Contract</option>
+                                <option value="Internship">Internship</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <p class="jobs-form__hint">
+                        Level + hình thức sẽ giúp AI matching phân loại CV chính xác hơn.
+                    </p>
+                </div>
+
+                <!-- DETAIL -->
+                <div class="jobs-form__section">
+                    <div class="jobs-form__section-title">Chi tiết JD</div>
+
+                    <div class="jobs-form__grid jobs-form__grid--2col">
+                        <div class="jobs-form__field">
+                            <label class="field__label">
+                                Kỹ năng yêu cầu <span class="field__label-note">(skillsRequired)</span>
+                            </label>
+                            <textarea class="field__textarea" rows="3"
+                                placeholder="VD: Node.js, Express.js, MongoDB, REST API, Git…"
+                                [(ngModel)]="newJob.skillsRequired"></textarea>
+                        </div>
+
+                        <div class="jobs-form__field">
+                            <label class="field__label">
+                                Kinh nghiệm yêu cầu <span class="field__label-note">(experienceRequired)</span>
+                            </label>
+                            <textarea class="field__textarea" rows="3"
+                                placeholder="VD: 1–2 năm làm việc, từng tham gia dự án thực tế…"
+                                [(ngModel)]="newJob.experienceRequired"></textarea>
+                        </div>
+
+                        <div class="jobs-form__field">
+                            <label class="field__label">
+                                Học vấn yêu cầu <span class="field__label-note">(educationRequired)</span>
+                            </label>
+                            <textarea class="field__textarea" rows="3"
+                                placeholder="VD: Tốt nghiệp ngành CNTT hoặc liên quan…"
+                                [(ngModel)]="newJob.educationRequired"></textarea>
+                        </div>
+
+                        <div class="jobs-form__field">
+                            <label class="field__label">
+                                Mô tả công việc <span class="field__label-note">(description)</span>
+                            </label>
+                            <textarea class="field__textarea" rows="3"
+                                placeholder="Mô tả nhiệm vụ chính, team, stack sử dụng…"
+                                [(ngModel)]="newJob.description"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="jobs-form__footer">
+                    <div class="jobs-form__actions">
+                        <button type="button" class="btn btn--ghost" (click)="loadJobs()">
+                            Refresh
+                        </button>
+
+                        <button type="button" class="btn btn--primary" (click)="onSaveJob()" [disabled]="isSaving">
+                            {{ isSaving ? 'Đang lưu…' : 'Tạo Job' }}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ✅ DÁN NGAY Ở ĐÂY -->
+                <div class="import-result" *ngIf="importMessage || importErrors.length">
+                    <p class="import-result__msg" *ngIf="importMessage">{{ importMessage }}</p>
+
+                    <div class="import-result__errors" *ngIf="importErrors.length">
+                        <div class="import-result__title">Lỗi import:</div>
+                        <ul>
+                            <li *ngFor="let e of importErrors">
+                                <span class="mono">Row {{ e.row ?? '—' }}</span> — {{ e.message }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <p *ngIf="saveMessage" class="jobs-form__status">{{ saveMessage }}</p>
+                <p *ngIf="errorMessage" class="error-text jobs-form__error">{{ errorMessage }}</p>
+
+            </div>
+        </section>
+
+        <!-- LIST -->
+        <section class="card card--shadow">
+            <div class="card__header jobs-list__header">
+                <div>
+                    <h2 class="card__title">Danh sách JD</h2>
+                    <p class="card__sub">Có thể xoá khi JD hết hiệu lực.</p>
+                </div>
+
+                <div class="jobs-list__chips" *ngIf="jobs.length">
+                    <span class="chip chip--primary">Tất cả JD</span>
+                    <span class="chip chip--soft">Tổng: {{ jobs.length }} JD</span>
+                </div>
+            </div>
+
+            <ng-container *ngIf="isLoading; else jobsOrEmpty">
+                <div class="empty-state empty-state--inline">
+                    <div class="spinner"></div>
+                    <p class="empty-state__text">Đang tải danh sách JD…</p>
+                </div>
+            </ng-container>
+
+            <ng-template #jobsOrEmpty>
+                <ng-container *ngIf="filteredJobs.length; else emptyJobs">
+                    <div class="jobs-table-wrapper">
+                        <table class="table table--jd">
+                            <thead>
+                                <tr>
+                                    <th class="col-code">Mã JD</th>
+                                    <th class="col-title">Tên vị trí</th>
+                                    <th class="col-level">Level</th>
+                                    <th class="col-type">Hình thức</th>
+                                    <th class="col-skills">Skills (tóm tắt)</th>
+                                    <th class="col-created">Created at</th>
+                                    <th class="col-actions">Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr *ngFor="let j of filteredJobs">
+                                    <td class="table__mono col-code">{{ j.code || '—' }}</td>
+                                    <td class="col-title">{{ j.title }}</td>
+
+                                    <td class="col-level">
+                                        <span class="badge" [class.badge--muted]="!j.level">
+                                            {{ getLevelLabel(j.level) }}
+                                        </span>
+                                    </td>
+
+                                    <td class="col-type">
+                                        <span class="badge badge--soft" [class.badge--muted]="!j.type">
+                                            {{ getTypeLabel(j.type) }}
+                                        </span>
+                                    </td>
+
+                                    <td class="col-skills">
+                                        {{ (j.skillsRequired || '') | slice:0:90 }}{{ (j.skillsRequired || '').length >
+                                        90 ? '…' : '' }}
+                                    </td>
+
+                                    <td class="table__mono col-created">
+                                        {{ j.createdAt | date:'dd/MM/yyyy, HH:mm' }}
+                                    </td>
+
+                                    <td class="col-actions">
+                                        <button type="button" class="link-btn link-btn--danger"
+                                            (click)="onDeleteJob(j)">
+                                            Xoá
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="jobs-pagination" *ngIf="totalPages > 1">
+                        <button class="btn btn--ghost" type="button" (click)="goPrevPage()"
+                            [disabled]="currentPage === 1">
+                            Trước
+                        </button>
+                        <span class="jobs-pagination__info">Trang {{ currentPage }} / {{ totalPages }}</span>
+                        <button class="btn btn--ghost" type="button" (click)="goNextPage()"
+                            [disabled]="currentPage === totalPages">
+                            Sau
+                        </button>
+                    </div>
+                </ng-container>
+
+                <ng-template #emptyJobs>
+                    <div class="empty-state">
+                        <div class="empty-state__icon">📄</div>
+                        <h3 class="empty-state__title">Chưa có JD nào</h3>
+                        <p class="empty-state__text">Hãy tạo một Job ở form bên trên để test AI matching.</p>
+                    </div>
+                </ng-template>
+            </ng-template>
+        </section>
+    </div>
+</div>

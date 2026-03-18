@@ -1,0 +1,223 @@
+<div class="page">
+    <header class="page__header">
+        <div>
+            <h1 class="page__title">Phân Loại CV</h1>
+            <p class="page__subtitle">
+                Upload CV của ứng viên, backend sẽ trích xuất nội dung, chuẩn hóa dữ liệu và dùng AI (Gemini)
+                để so khớp với các Job Description trong hệ thống.
+            </p>
+            <p class="page__subtitle page__subtitle--meta">
+                AI + Gemini • Graduation Project • Flow: Upload CV → AI phân tích → Gợi ý & xếp hạng job phù hợp.
+            </p>
+        </div>
+    </header>
+
+    <div class="page__grid">
+        <!-- LEFT -->
+        <section class="card card--upload">
+            <h2 class="card__title">1. Upload CV để AI đọc & phân loại</h2>
+            <p class="card__sub card__sub--upload">
+                Hỗ trợ <span class="fmt">PDF</span>, <span class="fmt">DOC/DOCX</span>, <span
+                    class="fmt">JPG/PNG</span>.
+                Sau khi upload, backend sẽ trích xuất text và chạy AI để so khớp với các vị trí trong hệ thống.
+            </p>
+
+            <label class="upload-box__area">
+                <input type="file" multiple class="upload-box__input" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                    (change)="onFilesChange($event)" />
+                <div class="upload-box__content">
+                    <div class="tag-pill">
+                        {{ selectedFileName || 'Chọn hoặc kéo CV vào đây' }}
+                    </div>
+                    <div class="upload-box__text">
+                        {{
+                        selectedFileName
+                        ? 'Đã chọn: ' + selectedFileName
+                        : 'Hỗ trợ PDF, DOC/DOCX, JPG/PNG. Dung lượng < 10MB/file.' }} </div>
+                    </div>
+            </label>
+
+            <!-- Buttons gọn -->
+            <div class="run-row">
+                <div class="run-actions">
+                    <button class="btn btn--primary btn--sm" type="button" (click)="onRunMatching()"
+                        [disabled]="!selectedFiles.length || isMatching">
+                        <span class="btn__icon">🚀</span>
+                        <span *ngIf="!isMatching">Xử lí CV</span>
+                        <span *ngIf="isMatching">Đang xử lý...</span>
+                    </button>
+
+                    <button class="btn btn--ghost btn--sm" type="button" (click)="clearFiles()"
+                        [disabled]="(!selectedFiles.length && !cvResults.length) || isMatching">
+                        <span class="btn__icon">🧹</span>
+                        Xóa file
+                    </button>
+                </div>
+
+                <span class="run-row__hint">
+                    Upload nhiều CV → chọn từng CV bên phải để xem kết quả chi tiết.
+                </span>
+            </div>
+
+            <p *ngIf="errorMessage" class="error-text">
+                {{ errorMessage }}
+            </p>
+        </section>
+
+        <!-- RIGHT -->
+        <section class="card card--result">
+            <!-- ✅ CV switcher (lọc từng CV) -->
+            <div class="cv-switcher" *ngIf="cvResults.length">
+                <div class="cv-switcher__title">Kết quả theo từng CV ({{ cvResults.length }})</div>
+
+                <div class="cv-list">
+                    <button class="cv-item" *ngFor="let item of cvResults" (click)="setActiveCv(item.id)"
+                        [class.cv-item--active]="item.id === activeCvId" type="button">
+                        <div class="cv-item__name">
+                            {{ item.fileName }}
+                        </div>
+
+                        <div class="cv-item__meta">
+                            <span class="cv-item__pill" *ngIf="item.ok">OK</span>
+                            <span class="cv-item__pill" *ngIf="!item.ok">FAIL</span>
+                            <span class="cv-item__pill" *ngIf="item.ok && item.firstRow">
+                                {{ item.firstRow.matchScore }}%
+                            </span>
+                            <span class="cv-item__pill" *ngIf="item.ok && item.firstRow">
+                                {{ statusLabel(item.firstRow.status) }}
+                            </span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- DETAIL PANEL -->
+            <div class="detail-panel" *ngIf="selectedCandidate; else emptyResult">
+                <div class="match-card__header">
+                    <div>
+                        <h2 class="card__title">{{ selectedCandidate.name }}</h2>
+                        <p class="card__sub">Đề xuất: {{ selectedCandidate.recommendedJob }}</p>
+
+                        <div class="match-card__tags">
+                            <span class="tag-pill" *ngFor="let t of matchTags">{{ t }}</span>
+                        </div>
+                    </div>
+
+                    <div class="match-card__score-wrap">
+                        <div class="match-card__score-label">Mức Độ Phù Hợp</div>
+                        <div class="match-card__score-value">{{ selectedCandidate.matchScore }}%</div>
+
+                        <div class="match-card__bar">
+                            <div class="match-card__bar-fill" [style.width.%]="selectedCandidate.matchScore"></div>
+                        </div>
+
+                        <div class="match-card__status-row">
+                            <span class="match-card__status-label">Trạng thái</span>
+                            <span class="badge" [ngClass]="{
+                  'badge--success': selectedCandidate.status === 'Suitable',
+                  'badge--warning': selectedCandidate.status === 'Potential',
+                  'badge--danger': selectedCandidate.status === 'NotFit'
+                }">
+                                {{ statusLabel(selectedCandidate.status) }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div *ngIf="matchSummary as summary" class="match-card__summary">
+                    <p class="match-card__summary-title">Tóm Tắt Từ AI</p>
+
+                    <div *ngIf="summary.mainSkills.length" class="summary-row">
+                        <div class="summary-label">Kỹ năng:</div>
+                        <div class="summary-value">{{ summary.mainSkills.join(', ') }}</div>
+                    </div>
+
+                    <div *ngIf="summary.mainDomains.length" class="summary-row">
+                        <div class="summary-label">Lĩnh vực:</div>
+                        <div class="summary-value">{{ summary.mainDomains.join(', ') }}</div>
+                    </div>
+
+                    <div *ngIf="summary.seniority" class="summary-row">
+                        <div class="summary-label">Cấp độ:</div>
+                        <div class="summary-value">{{ summary.seniority }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EMPTY -->
+            <ng-template #emptyResult>
+                <div class="empty-state">
+                    <div class="robot" [class.robot--thinking]="isMatching || isLoadingFromDb">
+                        <div class="robot__head">
+                            <div class="robot__eye"></div>
+                            <div class="robot__eye"></div>
+                        </div>
+                        <div class="robot__body"></div>
+                    </div>
+
+                    <h3 class="empty-state__title">
+                        {{ (isMatching || isLoadingFromDb) ? 'AI đang phân tích CV...' : 'Chưa có kết quả AI' }}
+                    </h3>
+
+                    <p class="empty-state__text">
+                        <ng-container *ngIf="!isMatching">
+                            Hãy upload CV, hệ thống sẽ tự động phân tích và hiển thị kết quả.
+                        </ng-container>
+                        <ng-container *ngIf="isMatching">
+                            Đang trích xuất nội dung CV, chuẩn hóa dữ liệu và so khớp với Job Description...
+                        </ng-container>
+                    </p>
+
+                    <div *ngIf="isMatching || isLoadingFromDb" class="loading-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+
+                    <div *ngIf="cvResults.length && !selectedCandidate" class="empty-mini">
+                        Bạn đã có danh sách CV bên trên, hãy chọn 1 CV để xem chi tiết.
+                    </div>
+                </div>
+            </ng-template>
+        </section>
+    </div>
+
+    <!-- TABLE -->
+    <section class="card page__section--below" *ngIf="candidates.length">
+        <div class="card__header">
+            <div>
+                <h2 class="card__title">Kết Quả AI So Khớp</h2>
+                <p class="card__sub">
+                    Danh sách các vị trí phù hợp được AI xếp hạng từ cao đến thấp. Click vào một dòng để xem chi tiết.
+                </p>
+            </div>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Ứng Viên</th>
+                    <th>Vị Trí Đề Xuất</th>
+                    <th>Mức Độ Phù Hợp</th>
+                    <th>Trạng Thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let c of candidates" (click)="onSelectCandidate(c)"
+                    [class.table__row--selected]="c === selectedCandidate">
+                    <td>{{ c.name }}</td>
+                    <td>{{ c.recommendedJob }}</td>
+                    <td>{{ c.matchScore }}%</td>
+                    <td>
+                        <span class="badge" [ngClass]="{
+                'badge--success': c.status === 'Suitable',
+                'badge--warning': c.status === 'Potential',
+                'badge--danger': c.status === 'NotFit'
+              }">
+                            {{ statusLabel(c.status) }}
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+</div>

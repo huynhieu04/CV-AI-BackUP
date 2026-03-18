@@ -1,0 +1,309 @@
+:host {
+    display: block;
+    height: 100%;
+}
+
+.page {
+    padding: 32px 40px 40px;
+    min-height: calc(100vh - 64px);
+    background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.12), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.14), transparent 55%);
+}
+
+.page__header {
+    margin-bottom: 20px;
+}
+
+.page__title {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #020617;
+}
+
+.page__subtitle {
+    margin-top: 4px;
+    font-size: 13px;
+    color: #64748b;
+    max-width: 780px;
+    line-height: 1.6;
+}
+
+.page__subtitle--meta {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+/* Card */
+.page .card {
+    border-radius: 18px;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    box-shadow:
+        0 18px 45px rgba(15, 23, 42, 0.06),
+        0 0 0 1px rgba(148, 163, 184, 0.08);
+    padding: 20px 24px 24px;
+    background: rgba(255, 255, 255, 0.96);
+}
+
+.card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.card__title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.card__sub {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+/* Loading */
+.candidates__loading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #6b7280;
+    padding: 16px 4px;
+}
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    border: 2px solid #e5e7eb;
+    border-top-color: #2563eb;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Table */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+.table thead {
+    background: #f1f5f9;
+}
+
+.table th,
+.table td {
+    padding: 10px 12px;
+    text-align: left;
+}
+
+.table tbody tr {
+    border-top: 1px solid #e5e7eb;
+    transition: background-color 0.12s ease;
+}
+
+.table tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+.table__mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+        'Courier New', monospace;
+}
+
+.table__cell--bold {
+    font-weight: 600;
+}
+
+/* Empty state */
+.empty-state {
+    padding: 20px 8px 18px;
+    text-align: center;
+}
+
+.empty-state__icon {
+    font-size: 30px;
+    margin-bottom: 6px;
+}
+
+.empty-state__title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.empty-state__text {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* Badges đã dùng chung với màn AI Classification */
+.badge {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.badge--success {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.badge--warning {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.badge--danger {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.error-text {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #b91c1c;
+}
+
+.empty-state--inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+}
+
+.spinner {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-top-color: #3b82f6;
+    animation: spin 0.6s linear infinite;
+}
+
+.table__link {
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.table__link:hover {
+    text-decoration: underline;
+}
+
+.muted {
+    color: #94a3b8;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .page {
+        padding: 24px 16px 28px;
+    }
+
+    .page .card {
+        padding: 16px 16px 18px;
+    }
+}
+
+/* ===== Actions column (Delete button) ===== */
+.table__th--right,
+.table__td--right {
+    text-align: right;
+}
+
+.btn-icon {
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    transition: transform 0.12s ease, box-shadow 0.18s ease, background-color 0.15s ease;
+}
+
+.btn-icon:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+}
+
+.btn-icon--danger:hover {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.35);
+}
+
+/* Optional: tránh table layout bị co giãn bậy khi text dài */
+.table {
+    table-layout: fixed;
+}
+
+.table th:nth-child(2),
+.table td:nth-child(2),
+.table th:nth-child(3),
+.table td:nth-child(3) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ===== Actions column (Delete button) ===== */
+.table__th--action,
+.table__td--action {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Nút xoá nhỏ, gọn */
+.btn-delete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+
+    border-radius: 999px;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    background: rgba(254, 226, 226, 0.85);
+    /* #fee2e2 */
+    color: #b91c1c;
+
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.18s ease, background-color 0.15s ease;
+}
+
+.btn-delete:hover {
+    background: rgba(254, 202, 202, 0.95);
+    /* #fecaca */
+    box-shadow: 0 10px 22px rgba(239, 68, 68, 0.18);
+    transform: translateY(-1px);
+}
+
+.btn-delete:active {
+    transform: translateY(0);
+}

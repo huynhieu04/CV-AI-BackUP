@@ -1,0 +1,244 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+/* ===== PAGE (same as Candidates) ===== */
+.page {
+  padding: 32px 40px 40px;
+  min-height: calc(100vh - 64px);
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.12), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.14), transparent 55%);
+}
+
+.page__header {
+  margin-bottom: 20px;
+}
+
+.page__title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #020617;
+}
+
+.page__subtitle {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #64748b;
+  max-width: 780px;
+  line-height: 1.6;
+}
+
+/* ===== CARD (same as Candidates) ===== */
+.page .card {
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  box-shadow:
+    0 18px 45px rgba(15, 23, 42, 0.06),
+    0 0 0 1px rgba(148, 163, 184, 0.08);
+  padding: 20px 24px 24px;
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.card__title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: #0f172a;
+}
+
+.card__sub {
+  margin: 0;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* ===== HEADER ROW ===== */
+.reports-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* MONO TEXT */
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* ===== BUTTONS (same as Jobs/Candidates vibe) ===== */
+.btn {
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform 0.08s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn[disabled] {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn--secondary {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  color: #111827;
+}
+
+.btn--secondary:hover {
+  box-shadow: 0 10px 18px rgba(2, 6, 23, 0.06);
+}
+
+/* ===== LOADING / ERROR / EMPTY ===== */
+.reports-loading,
+.reports-error,
+.reports-empty {
+  margin-top: 4px;
+  border-radius: 18px;
+  padding: 14px 16px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reports-loading {
+  background: #f9fafb;
+
+  .spinner {
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-top-color: #3b82f6;
+    animation: spin 0.6s linear infinite;
+  }
+}
+
+.reports-error {
+  background: #fef2f2;
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+.reports-empty {
+  background: #f9fafb;
+  margin-top: 8px;
+
+  &__icon {
+    font-size: 22px;
+  }
+
+  &__title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 2px;
+    color: #0f172a;
+  }
+
+  &__text {
+    font-size: 13px;
+    color: #6b7280;
+  }
+}
+
+/* ===== GRID STATS (same spacing/typography) ===== */
+.reports-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.reports-stat {
+  border-radius: 18px;
+  padding: 14px 16px 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+
+  .stat-label {
+    font-size: 13px;
+    color: #6b7280;
+  }
+
+  .stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .stat-caption {
+    font-size: 12px;
+    color: #9ca3af;
+  }
+}
+
+/* color variants */
+.reports-stat--primary {
+  border: 1px solid #dbeafe;
+  background: #eff6ff;
+}
+
+.reports-stat--success {
+  border: 1px solid #bbf7d0;
+  background: #ecfdf3;
+}
+
+.reports-stat--warning {
+  border: 1px solid #fed7aa;
+  background: #fffbeb;
+}
+
+.reports-stat--danger {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+}
+
+/* spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .page {
+    padding: 24px 16px 28px;
+  }
+
+  .page .card {
+    padding: 16px 16px 18px;
+  }
+
+  .reports-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .reports-card__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .reports-grid {
+    grid-template-columns: 1fr;
+  }
+}

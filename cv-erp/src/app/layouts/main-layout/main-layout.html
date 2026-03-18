@@ -1,0 +1,22 @@
+<div class="app-shell" [class.app-shell--collapsed]="isSidebarCollapsed">
+    <!-- SIDEBAR -->
+    <app-sidebar class="app-shell__sidebar" [collapsed]="isSidebarCollapsed"
+        (collapsedChange)="onSidebarCollapsedChange($event)">
+    </app-sidebar>
+
+    <!-- CỘT PHẢI -->
+    <div class="app-shell__main">
+        <!-- HEADER -->
+        <app-header (logout)="logout()"></app-header>
+
+        <!-- CONTENT -->
+        <main class="app-shell__content">
+            <router-outlet></router-outlet>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="app-shell__footer">
+            <span>© 2025  Graduation Project - Huỳnh Hữu Trọng Hiếu</span>
+        </footer>
+    </div>
+</div>

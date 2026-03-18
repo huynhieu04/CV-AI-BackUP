@@ -1,0 +1,42 @@
+<header class="app-header">
+    <div class="app-header__left">
+        <div class="app-header__search">
+            <input class="input app-header__search-input" type="text" placeholder="Search candidates or jobs..."
+                [(ngModel)]="searchTerm" (ngModelChange)="onHeaderSearchChange($event)" />
+        </div>
+    </div>
+
+    <!-- Cụm account bên phải -->
+    <div class="app-header__right" (click)="$event.stopPropagation()">
+        <button type="button" class="app-header__user" (click)="toggleUserMenu()"
+            [class.app-header__user--open]="isUserMenuOpen">
+            <div class="app-header__avatar">{{ avatarText }}</div>
+
+            <div class="app-header__meta">
+                <div class="app-header__name">Hi, {{ greetingName }}</div>
+                <div class="app-header__email">{{ email }}</div>
+            </div>
+
+            <span class="app-header__caret"></span>
+        </button>
+
+        <!-- Dropdown -->
+        <div class="user-menu" *ngIf="isUserMenuOpen">
+            <div class="user-menu__header">
+                <div class="user-menu__avatar">{{ avatarText }}</div>
+                <div>
+                    <div class="user-menu__name">{{ displayName }}</div>
+                    <div class="user-menu__mail">{{ email }}</div>
+                </div>
+            </div>
+
+            <div class="user-menu__divider"></div>
+
+            <div class="user-menu__section">
+                <button class="user-menu__item user-menu__item--danger" type="button" (click)="onLogoutClick()">
+                    Đăng xuất
+                </button>
+            </div>
+        </div>
+    </div>
+</header>

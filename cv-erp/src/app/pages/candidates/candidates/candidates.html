@@ -1,0 +1,125 @@
+<div class="page">
+    <!-- HEADER -->
+    <header class="page__header">
+        <div>
+            <h1 class="page__title">Danh Sách Ứng Viên</h1>
+            <p class="page__subtitle">
+                Danh sách hồ sơ đã được AI phân tích. Mỗi ứng viên có thể có nhiều kết quả
+                so khớp với các vị trí tuyển dụng khác nhau.
+            </p>
+            <p class="page__subtitle page__subtitle--meta">
+                Dữ liệu được sinh tự động khi upload CV ở màn
+                <strong>AI Classification</strong>.
+            </p>
+        </div>
+    </header>
+
+    <!-- CARD: Candidate list -->
+    <section class="card">
+        <div class="card__header">
+            <div>
+                <h2 class="card__title">Candidate list</h2>
+                <p class="card__sub">
+                    Danh sách ứng viên và vị trí phù hợp nhất do AI gợi ý.
+                </p>
+            </div>
+        </div>
+
+        <!-- LOADING -->
+        <ng-container *ngIf="isLoading; else dataOrEmpty">
+            <div class="empty-state empty-state--inline">
+                <div class="spinner"></div>
+                <p class="empty-state__text">Đang tải dữ liệu từ MongoDB...</p>
+            </div>
+        </ng-container>
+
+        <!-- DATA -->
+        <ng-template #dataOrEmpty>
+            <ng-container *ngIf="filteredRows.length; else emptyState">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width:70px">STT</th>
+                            <th>Email</th>
+                            <th>Công Việc Tốt Nhất</th>
+                            <th style="width:140px">Mức Độ Phù Hợp</th>
+                            <th style="width:140px">Trạng Thái</th>
+                            <th style="width:170px">Được Tạo Vào</th>
+                            <th class="table__th--action" style="width:90px">Xoá</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr *ngFor="let c of filteredRows">
+                            <!-- STT -->
+                            <td>{{ c.stt }}</td>
+
+                            <!-- Email → AI result -->
+                            <td class="table__mono">
+                                <a class="table__link" [routerLink]="['/admin/ai-classification']"
+                                    [queryParams]="{ candidateId: c.candidateId }">
+                                    {{ c.email }}
+                                </a>
+                            </td>
+
+                            <!-- Job → AI result -->
+                            <td>
+                                <ng-container *ngIf="c.bestJobId; else noJob">
+                                    <a class="table__link" [routerLink]="['/admin/ai-classification']"
+                                        [queryParams]="{ candidateId: c.candidateId }">
+                                        {{ c.bestJob }}
+                                    </a>
+                                </ng-container>
+
+                                <ng-template #noJob>
+                                    <span class="muted">Chưa có gợi ý</span>
+                                </ng-template>
+                            </td>
+
+                            <!-- Score -->
+                            <td>{{ c.matchScore }}%</td>
+
+                            <!-- Status -->
+                            <td>
+                                <span class="badge" [ngClass]="{
+          'badge--success': c.status === 'Suitable',
+          'badge--warning': c.status === 'Potential',
+          'badge--danger': c.status === 'NotFit'
+        }">
+                                    {{ statusLabel(c.status) }}
+                                </span>
+                            </td>
+
+                            <!-- Created -->
+                            <td>{{ c.createdAt | date: 'dd/MM/yyyy, HH:mm' }}</td>
+
+                            <!-- Delete -->
+                            <td class="table__td--action">
+                                <button type="button" class="btn-delete" title="Xoá hồ sơ"
+                                    (click)="onDeleteCandidate(c.candidateId, $event)">
+                                    Xoá
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </ng-container>
+
+            <!-- EMPTY -->
+            <ng-template #emptyState>
+                <div class="empty-state">
+                    <div class="empty-state__icon">📂</div>
+                    <h3 class="empty-state__title">Không có kết quả</h3>
+                    <p class="empty-state__text">
+                        Không tìm thấy candidate phù hợp với từ khóa tìm kiếm trên header.
+                    </p>
+                </div>
+            </ng-template>
+        </ng-template>
+
+        <!-- ERROR -->
+        <p *ngIf="errorMessage" class="error-text">
+            {{ errorMessage }}
+        </p>
+    </section>
+</div>

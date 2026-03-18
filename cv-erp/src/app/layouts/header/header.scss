@@ -1,0 +1,179 @@
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    height: 64px;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #e2e8f0;
+    background-color: rgba(248, 250, 252, 0.96);
+    backdrop-filter: blur(8px);
+}
+
+.app-header__left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.app-header__search {
+    width: 260px;
+}
+
+.app-header__search-input {
+    background-color: #f9fafb;
+}
+
+/* ==== ACCOUNT AREA ==== */
+.app-header__right {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Nút user */
+.app-header__user {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+    transition: background-color 0.15s ease, border-color 0.15s ease,
+        box-shadow 0.15s ease, transform 0.05s ease;
+}
+
+.app-header__user:hover {
+    background: #f3f4f6;
+    border-color: #e5e7eb;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.12);
+    transform: translateY(-1px);
+}
+
+.app-header__user--open {
+    border-color: #bfdbfe;
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+}
+
+.app-header__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.app-header__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.app-header__name {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.app-header__email {
+    font-size: 11px;
+    color: #6b7280;
+}
+
+.app-header__caret {
+    border: 4px solid transparent;
+    border-top-color: #6b7280;
+    margin-left: 2px;
+}
+
+/* ==== DROPDOWN ==== */
+.user-menu {
+    position: absolute;
+    right: 0;
+    top: 56px;
+    width: 300px;
+    /* nhỏ hơn chút vì chỉ còn logout */
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
+    padding: 10px;
+    z-index: 50;
+    overflow: hidden;
+}
+
+.user-menu__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 10px 12px;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.user-menu__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+}
+
+.user-menu__name {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.user-menu__mail {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.user-menu__divider {
+    height: 1px;
+    margin: 8px 0;
+    background: #eef2f7;
+}
+
+.user-menu__section {
+    padding: 4px;
+}
+
+.user-menu__item {
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    font-size: 13px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.user-menu__item:hover {
+    background: #f3f4f6;
+    border-color: #e5e7eb;
+}
+
+.user-menu__item--danger {
+    color: #b91c1c;
+    font-weight: 600;
+
+    &:hover {
+        background: #fef2f2;
+        border-color: #fecaca;
+    }
+}

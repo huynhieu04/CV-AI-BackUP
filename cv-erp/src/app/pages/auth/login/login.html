@@ -1,0 +1,42 @@
+<div class="auth">
+    <div class="auth__card">
+
+        <!-- BRAND -->
+        <div class="auth__brand">
+            <div class="auth__logo">CV</div>
+
+            <div class="auth__brand-text">
+                <h1 class="auth__title">AI CV Classifier</h1>
+                <p class="auth__subtitle">Đăng nhập để sử dụng hệ thống.</p>
+            </div>
+        </div>
+
+        <!-- FORM -->
+        <form (ngSubmit)="onSubmit()" class="auth__form" novalidate>
+            <label class="field">
+                <span class="field__label">Username</span>
+                <input type="text" class="field__control" [(ngModel)]="username" name="username"
+                    placeholder="hr / admin..." autocomplete="username" (input)="clearError()" [disabled]="loading" />
+            </label>
+
+            <label class="field">
+                <span class="field__label">Password</span>
+                <input type="password" class="field__control" [(ngModel)]="password" name="password"
+                    placeholder="••••••" autocomplete="current-password" (input)="clearError()" [disabled]="loading" />
+            </label>
+
+            <!-- ERROR -->
+            <div class="auth__error" *ngIf="error">{{ error }}</div>
+
+            <!-- SUBMIT -->
+            <button class="btn btn--primary auth__submit" type="submit" [disabled]="loading">
+                <span *ngIf="!loading">Đăng nhập</span>
+
+                <span *ngIf="loading" class="auth__loading">
+                    <span class="auth__spinner"></span>
+                    Đang đăng nhập...
+                </span>
+            </button>
+        </form>
+    </div>
+</div>

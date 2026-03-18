@@ -1,0 +1,136 @@
+.sidebar {
+    width: 100%;
+    height: 100%;
+    background: var(--sidebar-bg);
+    color: #e5e7eb;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Logo + nút toggle */
+.sidebar__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.sidebar__logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sidebar__logo-mark {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.sidebar__logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar__logo-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.sidebar__logo-sub {
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+/* Nav */
+.sidebar__nav {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sidebar__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    color: #e5e7eb;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.sidebar__item:hover {
+    background-color: #0f172a;
+}
+
+.sidebar__item--active {
+    background-color: #111827;
+    color: #f9fafb;
+}
+
+.sidebar__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background-color: #4b5563;
+}
+
+.sidebar__item--active .sidebar__dot {
+    background-color: #22c55e;
+}
+
+/* Nút mũi tên */
+.sidebar__toggle {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    background: transparent;
+    color: #e5e7eb;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.sidebar__toggle:hover {
+    background: rgba(15, 23, 42, 0.6);
+}
+
+/* ========= TRẠNG THÁI THU GỌN ========= */
+
+.sidebar.sidebar--collapsed {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/* Ẩn text, chỉ giữ icon */
+.sidebar.sidebar--collapsed .sidebar__logo-text,
+.sidebar.sidebar--collapsed .sidebar__item-label {
+    display: none;
+}
+
+/* Căn giữa icon menu */
+.sidebar.sidebar--collapsed .sidebar__item {
+    justify-content: center;
+}
+
+/* Cho dot trông như icon tròn */
+.sidebar.sidebar--collapsed .sidebar__dot {
+    width: 10px;
+    height: 10px;
+}

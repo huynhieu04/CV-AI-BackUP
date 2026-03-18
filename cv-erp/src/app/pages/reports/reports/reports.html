@@ -1,0 +1,85 @@
+<!-- src/app/pages/reports/reports/reports.html -->
+<div class="page page--reports">
+    <!-- HEADER -->
+    <header class="page__header">
+        <div>
+            <h1 class="page__title">Báo Cáo</h1>
+            <p class="page__subtitle">
+                Thống kê hiệu quả phân loại CV:
+                <strong>phù hợp</strong> – <strong>tiềm năng</strong> – <strong>không phù hợp</strong>.
+            </p>
+        </div>
+    </header>
+
+    <!-- CARD CHÍNH -->
+    <section class="card card--shadow reports-card">
+        <div class="reports-card__header">
+            <div>
+                <h2 class="card__title">Tổng quan kết quả phân loại</h2>
+                <p class="card__sub">
+                    Dữ liệu tổng hợp từ bảng
+                    <span class="mono">MatchResult</span> trong MongoDB
+                    (<span class="mono">API /api/reports/summary</span>).
+                </p>
+            </div>
+
+            <button type="button" class="btn btn--secondary reports-refresh-btn" [disabled]="isLoading"
+                (click)="loadOverview()">
+                {{ isLoading ? 'Đang tải…' : 'Refresh' }}
+            </button>
+        </div>
+
+        <!-- LOADING STATE -->
+        <div *ngIf="isLoading" class="reports-loading">
+            <div class="spinner"></div>
+            <p>Đang tải dữ liệu báo cáo…</p>
+        </div>
+
+        <!-- ERROR -->
+        <div *ngIf="!isLoading && errorMessage" class="reports-error">
+            {{ errorMessage }}
+        </div>
+
+        <!-- NO DATA -->
+        <div *ngIf="!isLoading && !errorMessage && (!overview || overview.totalCv === 0)" class="reports-empty">
+            <div class="reports-empty__icon">📊</div>
+            <div>
+                <h3 class="reports-empty__title">Chưa có dữ liệu thống kê</h3>
+                <p class="reports-empty__text">
+                    Vui lòng chạy thử AI classification để sinh MatchResult rồi quay lại trang báo cáo.
+                </p>
+            </div>
+        </div>
+
+        <!-- DATA GRID -->
+        <div *ngIf="!isLoading && !errorMessage && overview && overview.totalCv > 0" class="reports-grid">
+            <!-- Tổng CV -->
+            <div class="reports-stat reports-stat--primary">
+                <div class="stat-label">Tổng số CV đã phân loại</div>
+                <div class="stat-value">{{ overview.totalCv }}</div>
+                <div class="stat-caption">100%</div>
+            </div>
+
+            <!-- CV phù hợp -->
+            <div class="reports-stat reports-stat--success">
+                <div class="stat-label">CV phù hợp</div>
+                <div class="stat-value">{{ overview.suitable }}</div>
+                <div class="stat-caption">{{ overview.suitablePercent | number : '1.0-1' }}%</div>
+            </div>
+
+            <!-- CV tiềm năng -->
+            <div class="reports-stat reports-stat--warning">
+                <div class="stat-label">CV tiềm năng</div>
+                <div class="stat-value">{{ overview.potential }}</div>
+                <div class="stat-caption">{{ overview.potentialPercent | number : '1.0-1' }}%</div>
+            </div>
+
+            <!-- CV không phù hợp -->
+            <div class="reports-stat reports-stat--danger">
+                <div class="stat-label">CV không phù hợp</div>
+                <div class="stat-value">{{ overview.notFit }}</div>
+                <div class="stat-caption">{{ overview.notFitPercent | number : '1.0-1' }}%</div>
+            </div>
+        </div>
+    </section>
+</div>

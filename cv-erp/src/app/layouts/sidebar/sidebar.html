@@ -1,0 +1,51 @@
+<nav class="sidebar" [class.sidebar--collapsed]="collapsed">
+    <!-- Logo + nút toggle -->
+    <div class="sidebar__top">
+        <div class="sidebar__logo">
+            <div class="sidebar__logo-mark">CV</div>
+            <div class="sidebar__logo-text">
+                <div class="sidebar__logo-title">AI CV Classifier</div>
+                <div class="sidebar__logo-sub">Talent matching CV</div>
+            </div>
+        </div>
+
+        <button class="sidebar__toggle" type="button" (click)="onToggleClick()" aria-label="Toggle sidebar">
+            <span *ngIf="!collapsed">&laquo;</span>
+            <span *ngIf="collapsed">&raquo;</span>
+        </button>
+    </div>
+
+    <!-- Menu -->
+    <div class="sidebar__nav">
+        <a class="sidebar__item" routerLink="/ai-classification" routerLinkActive="sidebar__item--active"
+            [routerLinkActiveOptions]="{ exact: true }">
+            <span class="sidebar__dot"></span>
+            <span class="sidebar__item-label">AI Classification</span>
+        </a>
+
+        <a class="sidebar__item" routerLink="/candidates" routerLinkActive="sidebar__item--active">
+            <span class="sidebar__dot"></span>
+            <span class="sidebar__item-label">Candidates</span>
+        </a>
+
+        <a class="sidebar__item" routerLink="/jobs" routerLinkActive="sidebar__item--active">
+            <span class="sidebar__dot"></span>
+            <span class="sidebar__item-label">Jobs</span>
+        </a>
+
+        <a class="sidebar__item" routerLink="/reports" routerLinkActive="sidebar__item--active">
+            <span class="sidebar__dot"></span>
+            <span class="sidebar__item-label">Reports</span>
+        </a>
+
+        <a class="sidebar__item" routerLink="/settings" routerLinkActive="sidebar__item--active">
+            <span class="sidebar__dot"></span>
+            <span class="sidebar__item-label">Settings</span>
+        </a>
+
+        <a class="sidebar__item" *ngIf="isAdmin" routerLink="/settings/users" routerLinkActive="sidebar__item--active">
+            <span class="sidebar__dot"></span>
+            <span class="sidebar__item-label">Users</span>
+        </a>
+    </div>
+</nav>
